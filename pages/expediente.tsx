@@ -385,7 +385,7 @@ export default function ExpedientePage() {
               <div style={{ marginTop: 14 }}>
                 <div style={styles.twoCol}>
                   {visibleFields.map((f) => {
-                    const colSpan2 = isTextArea(f.type);
+                    const colSpan2 = isTextArea(f.type) || f.name === "ayuda_bisrehab";
                     return (
                       <div key={f.name} style={{ ...styles.field, gridColumn: colSpan2 ? "1 / -1" : "auto" }}>
                         <label htmlFor={f.name} style={styles.label}>
