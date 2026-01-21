@@ -19,7 +19,7 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
 
 
   // D
-  { name: "acta_junta", label: "Acta de la junta (texto o enlace)", type: "textarea" },
+  { name: "acta_junta", label: "Acta de la junta (nombre del archivo)", type: "textarea" },
 
   // E – rehab
   { name: "ayuda_rehab", label: "Denominacion del programa de ayuda (rehabilitación)", type: "text" },
