@@ -11,11 +11,11 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
   { name: "calle_actuacion", label: "Dirección de la actuación", type: "text" },
 
   // C
-  { name: "nombre_representante", label: "Nombre del representante", type: "text" },
-  { name: "nif_representante", label: "NIF del representante", type: "text" },
+  { name: "nombre_representante", label: "Nombre del firmante del contrato", type: "text" },
+  { name: "nif_representante", label: "NIF del firmante del contrato", type: "text" },
   { name: "correo_representante", label: "Correo del representante", type: "email" },
   { name: "telefono_representante", label: "Teléfono del representante", type: "tel" },
-  { name: "presidente_comunidad", label: "Presidente/a de la comunidad", type: "text" },
+  
 
 
   // D
@@ -37,7 +37,7 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
   { name: "ent_bisayudabis", label: "Organismo concedente (BIS)", type: "text" },
   { name: "ano_bisayuda", label: "Año (BIS)", type: "number" },
   { name: "regul_bisayuda", label: "Convocatoria / base reguladora (BIS)", type: "text" },
-   { name: "num_expbisayuda", label: "Número de expediente (BIS)", type: "text" },
+  { name: "num_expbisayuda", label: "Número de expediente (BIS)", type: "text" },
   { name: "num_bisexp", label: "Nº expediente (BIS)", type: "text" },
   { name: "estado_bisayuda", label: "Estado (BIS)", type: "text" },
   { name: "fecha_solbisresolucion", label: "Fecha de solicitud (BIS)", type: "date" },
