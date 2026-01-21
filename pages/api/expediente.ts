@@ -38,9 +38,9 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
   { name: "ano_bisayuda", label: "Año (BIS)", type: "number" },
   { name: "regul_bisayuda", label: "Convocatoria / base reguladora (BIS)", type: "text" },
   { name: "num_expbisayuda", label: "Número de expediente (BIS)", type: "text" },
-  { name: "num_bisexp", label: "Nº expediente (BIS)", type: "text" },
+  { name: "num_bisexpayuda", label: "Nº expediente (BIS)", type: "text" },
   { name: "estado_bisayuda", label: "Estado (BIS)", type: "text" },
-  { name: "fecha_solbisresolucion", label: "Fecha de solicitud (BIS)", type: "date" },
+  { name: "fecha_solbisayuda", label: "Fecha de solicitud (BIS)", type: "date" },
   { name: "fecha_bisresolucion", label: "Fecha de resolución (BIS)", type: "date" },
   { name: "cuantia_bisayuda", label: "Cuantía concedida (BIS) €", type: "number" },
 ];
