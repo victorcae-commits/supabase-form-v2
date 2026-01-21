@@ -9,13 +9,14 @@ type Field = {
 
 // Campos BIS
 const BIS_FIELDS = new Set([
+  "ayuda_bisrehab",
   "ent_bisayudabis",
   "ano_bisayuda",
   "regul_bisayuda",
-  "num_bisexp",
+  "num_expbisayuda",
   "estado_bisayuda",
+  "fecha_solbisayuda",
   "fecha_bisresolucion",
-  "resol_bisayuda",
   "cuantia_bisayuda",
 ]);
 
@@ -25,9 +26,10 @@ const AYUDA_FIELDS = new Set([
   "ent_ayuda",
   "año_ayuda",
   "regul_ayuda",
+  "num_expayuda",
   "estado_ayuda",
+  "fecha_solayuda",
   "fecha_resolucion",
-  "resol_ayuda",
   "cuantia_ayuda",
 ]);
 
