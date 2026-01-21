@@ -16,8 +16,7 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
   { name: "correo_representante", label: "Correo del representante", type: "email" },
   { name: "telefono_representante", label: "Teléfono del representante", type: "tel" },
   { name: "presidente_comunidad", label: "Presidente/a de la comunidad", type: "text" },
-  { name: "fecha_inicio", label: "Fecha de inicio", type: "date" },
-  { name: "fecha_fin", label: "Fecha de fin", type: "date" },
+
 
   // D
   { name: "acta_junta", label: "Acta de la junta (texto o enlace)", type: "textarea" },
