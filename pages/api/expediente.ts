@@ -23,13 +23,14 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
   { name: "acta_junta", label: "Acta de la junta (texto o enlace)", type: "textarea" },
 
   // E – rehab
-  { name: "ayuda_rehab", label: "Ayuda o subvención (rehabilitación)", type: "text" },
-  { name: "ent_ayuda", label: "Organismo concedente", type: "text" },
+  { name: "ayuda_rehab", label: "Denominacion del programa de ayuda (rehabilitación)", type: "text" },
+  { name: "ent_ayuda", label: "Entidad u organismo gestor", type: "text" },
   { name: "año_ayuda", label: "Año de la ayuda", type: "text" },
-  { name: "regul_ayuda", label: "Convocatoria / base reguladora", type: "text" },
-  { name: "estado_ayuda", label: "Estado de la ayuda", type: "text" },
+  { name: "regul_ayuda", label: "Disposicion reguladora", type: "text" },
+  { name: "num_expayuda", label: "Número de expediente", type: "text" },
+  { name: "estado_ayuda", label: "Estado de la concesion", type: "text" },
+  { name: "fecha_solayuda", label: "Fecha de solicitud", type: "date" },
   { name: "fecha_resolucion", label: "Fecha de resolución", type: "date" },
-  { name: "resol_ayuda", label: "Referencia de la resolución", type: "text" },
   { name: "cuantia_ayuda", label: "Cuantía concedida (€)", type: "number" },
 
   // E – bis
@@ -37,10 +38,11 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
   { name: "ent_bisayudabis", label: "Organismo concedente (BIS)", type: "text" },
   { name: "ano_bisayuda", label: "Año (BIS)", type: "number" },
   { name: "regul_bisayuda", label: "Convocatoria / base reguladora (BIS)", type: "text" },
+   { name: "num_expbisayuda", label: "Número de expediente (BIS)", type: "text" },
   { name: "num_bisexp", label: "Nº expediente (BIS)", type: "text" },
   { name: "estado_bisayuda", label: "Estado (BIS)", type: "text" },
+  { name: "fecha_solbisresolucion", label: "Fecha de solicitud (BIS)", type: "date" },
   { name: "fecha_bisresolucion", label: "Fecha de resolución (BIS)", type: "date" },
-  { name: "resol_bisayuda", label: "Referencia de resolución (BIS)", type: "text" },
   { name: "cuantia_bisayuda", label: "Cuantía concedida (BIS) €", type: "number" },
 ];
 
