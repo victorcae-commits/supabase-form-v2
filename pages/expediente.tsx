@@ -87,8 +87,8 @@ export default function ExpedientePage() {
       const hasAyudaPending = f.some((x) => isAyudaField(x.name));
       const hasBisPending = f.some((x) => isBisField(x.name));
 
-      setHasAyuda(hasAyudaPending);          // si hay campos de ayuda pendientes, lo ponemos ON
-      setHasBis(hasAyudaPending && hasBisPending); // BIS solo si hay ayuda + campos BIS pendientes
+      setHasAyuda(false);          // si hay campos de ayuda pendientes, lo ponemos ON
+      setHasBis(false); // BIS solo si hay ayuda + campos BIS pendientes
 
       setLoading(false);
     })();
