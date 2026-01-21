@@ -33,7 +33,7 @@ const EDITABLE_FIELDS: Array<{ name: string; label: string; type: FieldType }> =
   { name: "cuantia_ayuda", label: "Cuantía concedida (€)", type: "number" },
 
   // E – bis
-  { name: "ayuda_bisrehab", label: "¿Existe ayuda BIS? (sí/no)", type: "text" },
+  { name: "ayuda_bisrehab", label: "Denominacion del programa de ayuda (BIS) (rehabilitación)", type: "text" },
   { name: "ent_bisayudabis", label: "Organismo concedente (BIS)", type: "text" },
   { name: "ano_bisayuda", label: "Año (BIS)", type: "number" },
   { name: "regul_bisayuda", label: "Convocatoria / base reguladora (BIS)", type: "text" },
