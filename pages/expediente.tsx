@@ -65,35 +65,55 @@ export default function ExpedientePage() {
   const [values, setValues] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    if (!token) return;
+    // Importante para build/prerender: si no hay token, no fetcheamos
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
 
     (async () => {
-      setLoading(true);
-      setMsg(null);
+      try {
+        if (cancelled) return;
 
-      const res = await fetch(`/api/expediente?token=${encodeURIComponent(token)}`);
-      const json = await res.json();
+        setLoading(true);
+        setMsg(null);
 
-      if (!res.ok) {
-        setFields([]);
-        setMsg({ type: "error", text: json?.error || "No se pudo cargar el formulario." });
+        const res = await fetch(`/api/expediente?token=${encodeURIComponent(token)}`);
+        const json = await res.json();
+
+        if (cancelled) return;
+
+        if (!res.ok) {
+          setFields([]);
+          setMsg({ type: "error", text: json?.error || "No se pudo cargar el formulario." });
+          setLoading(false);
+          return;
+        }
+
+        const f: Field[] = json.fields || [];
+        setFields(f);
+
+        // Auto-activar switches si ya hay campos de ayuda/bis en el JSON
+        const hasAyudaPending = f.some((x) => isAyudaField(x.name));
+        const hasBisPending = f.some((x) => isBisField(x.name));
+
+        setHasAyuda(hasAyudaPending);
+        setHasBis(hasAyudaPending && hasBisPending);
+
         setLoading(false);
-        return;
+      } catch (err) {
+        if (cancelled) return;
+        setFields([]);
+        setMsg({ type: "error", text: "Error inesperado al cargar el formulario." });
+        setLoading(false);
       }
-
-      const f: Field[] = json.fields || [];
-      setFields(f);
-
-      // Auto-activar switches si ya hay campos de ayuda/bis pendientes en el JSON
-      // (así el usuario lo ve directo si toca rellenarlo)
-      const hasAyudaPending = f.some((x) => isAyudaField(x.name));
-      const hasBisPending = f.some((x) => isBisField(x.name));
-
-      setHasAyuda(false);          // si hay campos de ayuda pendientes, lo ponemos ON
-      setHasBis(false); // BIS solo si hay ayuda + campos BIS pendientes
-
-      setLoading(false);
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   function setValue(name: string, v: any) {
@@ -101,108 +121,81 @@ export default function ExpedientePage() {
   }
 
   // Campos visibles según switches:
-  // - Base (A/C/D) siempre visibles (son los que no son AYUDA ni BIS)
+  // - Base (A/C/D) siempre visibles (los que no son AYUDA ni BIS)
   // - AYUDA solo si hasAyuda
   // - BIS solo si hasAyuda && hasBis
   const visibleFields = useMemo(() => {
     return fields.filter((f) => {
       if (isBisField(f.name)) return hasAyuda && hasBis;
       if (isAyudaField(f.name)) return hasAyuda;
-      return true; // A/C/D
+      return true;
     });
   }, [fields, hasAyuda, hasBis]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!token) return;
-  
+
     // 👉 COMPROBAR CAMPOS VACÍOS VISIBLES
-    const camposVacios = [];
-  
-    // usamos los mismos campos que luego se envían
-    const toCheck = [...baseFields, ...ayudaFields, ...bisFields];
-  
+    const camposVacios: string[] = [];
+    const toCheck = visibleFields;
+
     for (const f of toCheck) {
       const v = values[f.name];
       if (v === undefined || v === null || (typeof v === "string" && v.trim() === "")) {
         camposVacios.push(f.label);
       }
     }
-  
+
     if (camposVacios.length > 0) {
       const ok = window.confirm(
         "Hay campos sin rellenar.\n\n¿Seguro que quieres enviar el formulario igualmente?"
       );
       if (!ok) return;
     }
-  
-    // 👉 SI ACEPTA, SEGUIMOS
+
     setSubmitting(true);
     setMsg({ type: "info", text: "Enviando…" });
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!token) return;
-  
-    // 👉 COMPROBAR CAMPOS VACÍOS VISIBLES
-    const camposVacios = [];
-  
-    // usamos los mismos campos que luego se envían
-    const toCheck = [...baseFields, ...ayudaFields, ...bisFields];
-  
-    for (const f of toCheck) {
-      const v = values[f.name];
-      if (v === undefined || v === null || (typeof v === "string" && v.trim() === "")) {
-        camposVacios.push(f.label);
+
+    try {
+      const data: Record<string, any> = {};
+
+      // ✅ Guardamos el flag BIS (si no hay ayuda, BIS debe ir a false)
+      data["ayuda_bisrehab"] = hasAyuda ? hasBis : false;
+
+      // Solo enviamos campos visibles
+      for (const f of visibleFields) {
+        const v = values[f.name];
+
+        if (v === null || v === undefined) continue;
+        if (typeof v === "string" && v.trim() === "") continue;
+
+        data[f.name] = typeof v === "string" ? v.trim() : v;
       }
-    }
-  
-    if (camposVacios.length > 0) {
-      const ok = window.confirm(
-        "Hay campos sin rellenar.\n\n¿Seguro que quieres enviar el formulario igualmente?"
-      );
-      if (!ok) return;
-    }
-  
-    // 👉 SI ACEPTA, SEGUIMOS
-    setSubmitting(true);
-    setMsg({ type: "info", text: "Enviando…" });
 
+      const res = await fetch("/api/expediente_submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, data }),
+      });
 
-    const data: Record<string, any> = {};
+      const json = await res.json();
 
-    // ✅ Guardamos el flag BIS (si no hay ayuda, BIS debe ir a false)
-    // (Esto cuadra con tu columna bool ayuda_bisrehab)
-    data["ayuda_bisrehab"] = hasAyuda ? hasBis : false;
+      if (!res.ok) {
+        setMsg({ type: "error", text: json?.error || "Error al guardar." });
+        setSubmitting(false);
+        return;
+      }
 
-    // Solo enviamos campos que el usuario ve (según switches)
-    for (const f of visibleFields) {
-      const v = values[f.name];
-
-      if (v === null || v === undefined) continue;
-      if (typeof v === "string" && v.trim() === "") continue;
-
-      data[f.name] = typeof v === "string" ? v.trim() : v;
-    }
-
-    const res = await fetch("/api/expediente_submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, data }),
-    });
-
-    const json = await res.json();
-
-    if (!res.ok) {
-      setMsg({ type: "error", text: json?.error || "Error al guardar." });
+      setMsg({ type: "success", text: "✅ Datos enviados correctamente. Ya puedes cerrar esta página." });
       setSubmitting(false);
-      return;
+    } catch {
+      setMsg({ type: "error", text: "Error inesperado al enviar." });
+      setSubmitting(false);
     }
-
-    setMsg({ type: "success", text: "✅ Datos enviados correctamente. Ya puedes cerrar esta página." });
-    setSubmitting(false);
   }
 
-  // Estilos tipo “bonito” como tu captura
+  // Estilos tipo “bonito”
   const styles = {
     page: {
       minHeight: "100vh",
@@ -255,10 +248,8 @@ export default function ExpedientePage() {
         padding: "12px 14px",
         fontSize: 14,
         border: "1px solid",
-        background:
-          type === "success" ? "#ecfdf5" : type === "error" ? "#fef2f2" : "#f9fafb",
-        borderColor:
-          type === "success" ? "#a7f3d0" : type === "error" ? "#fecaca" : "#e5e7eb",
+        background: type === "success" ? "#ecfdf5" : type === "error" ? "#fef2f2" : "#f9fafb",
+        borderColor: type === "success" ? "#a7f3d0" : type === "error" ? "#fecaca" : "#e5e7eb",
         color: type === "success" ? "#065f46" : type === "error" ? "#991b1b" : "#374151",
       }) as const,
 
@@ -316,9 +307,6 @@ export default function ExpedientePage() {
         transition: "all .2s ease",
       }) as const,
 
-    sectionTitle: { marginTop: 16, fontWeight: 800, fontSize: 14 } as const,
-    sectionHint: { marginTop: 4, fontSize: 12, color: "#6b7280" } as const,
-
     button: (disabled: boolean) =>
       ({
         marginTop: 14,
@@ -375,9 +363,7 @@ export default function ExpedientePage() {
               <div style={styles.toggleBox}>
                 <div>
                   <div style={{ fontWeight: 800, fontSize: 14 }}>¿Hay alguna ayuda/subvención?</div>
-                  <div style={{ fontSize: 12, color: "#6b7280" }}>
-                    Si la activas, aparecerán los campos de la ayuda.
-                  </div>
+                  <div style={{ fontSize: 12, color: "#6b7280" }}>Si la activas, aparecerán los campos de la ayuda.</div>
                 </div>
 
                 <div
@@ -387,7 +373,7 @@ export default function ExpedientePage() {
                   onClick={() => {
                     setHasAyuda((v) => {
                       const next = !v;
-                      if (!next) setHasBis(false); // si apagas ayuda, apaga BIS también
+                      if (!next) setHasBis(false);
                       return next;
                     });
                   }}
@@ -406,14 +392,12 @@ export default function ExpedientePage() {
                 </div>
               </div>
 
-              {/* TOGGLE BIS: solo si hay AYUDA */}
+              {/* TOGGLE BIS */}
               {hasAyuda && (
                 <div style={styles.toggleBox}>
                   <div>
                     <div style={{ fontWeight: 800, fontSize: 14 }}>¿Hay una segunda ayuda?</div>
-                    <div style={{ fontSize: 12, color: "#6b7280" }}>
-                      Si la activas, aparecerán los campos de la segunda ayuda.
-                    </div>
+                    <div style={{ fontSize: 12, color: "#6b7280" }}>Si la activas, aparecerán los campos de la segunda ayuda.</div>
                   </div>
 
                   <div
