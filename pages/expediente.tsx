@@ -115,9 +115,58 @@ export default function ExpedientePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!token) return;
-
+  
+    // 👉 COMPROBAR CAMPOS VACÍOS VISIBLES
+    const camposVacios = [];
+  
+    // usamos los mismos campos que luego se envían
+    const toCheck = [...baseFields, ...ayudaFields, ...bisFields];
+  
+    for (const f of toCheck) {
+      const v = values[f.name];
+      if (v === undefined || v === null || (typeof v === "string" && v.trim() === "")) {
+        camposVacios.push(f.label);
+      }
+    }
+  
+    if (camposVacios.length > 0) {
+      const ok = window.confirm(
+        "Hay campos sin rellenar.\n\n¿Seguro que quieres enviar el formulario igualmente?"
+      );
+      if (!ok) return;
+    }
+  
+    // 👉 SI ACEPTA, SEGUIMOS
     setSubmitting(true);
     setMsg({ type: "info", text: "Enviando…" });
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!token) return;
+  
+    // 👉 COMPROBAR CAMPOS VACÍOS VISIBLES
+    const camposVacios = [];
+  
+    // usamos los mismos campos que luego se envían
+    const toCheck = [...baseFields, ...ayudaFields, ...bisFields];
+  
+    for (const f of toCheck) {
+      const v = values[f.name];
+      if (v === undefined || v === null || (typeof v === "string" && v.trim() === "")) {
+        camposVacios.push(f.label);
+      }
+    }
+  
+    if (camposVacios.length > 0) {
+      const ok = window.confirm(
+        "Hay campos sin rellenar.\n\n¿Seguro que quieres enviar el formulario igualmente?"
+      );
+      if (!ok) return;
+    }
+  
+    // 👉 SI ACEPTA, SEGUIMOS
+    setSubmitting(true);
+    setMsg({ type: "info", text: "Enviando…" });
+
 
     const data: Record<string, any> = {};
 
