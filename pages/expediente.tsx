@@ -357,7 +357,7 @@ export default function ExpedientePage() {
 
       <div style={styles.container}>
         <div style={styles.pill}>Documentación del expediente</div>
-        <h1 style={styles.h1}>Completar datos pendientes</h1>
+        <h1 style={styles.h1}>Formulario datos CAE</h1>
         <p style={styles.p}>Rellena únicamente los campos solicitados.</p>
 
         <div style={styles.card}>
